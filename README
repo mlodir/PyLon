@@ -1,0 +1,5 @@
+Python IDE. For now its just extended version of QTextEdit, which contains syntax highlighting, autoindenting and almost done autocompletion.
+
+If you are so desperate in searching for good python IDE, that you find out this project, try to run it by typing:
+python main.pyw
+Its important to use <3 version of python
