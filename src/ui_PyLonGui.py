@@ -1,0 +1,108 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'ui/PyLonGui.ui'
+#
+# Created: Sun Aug 21 01:57:05 2011
+#      by: PyQt4 UI code generator 4.8.4
+#
+# WARNING! All changes made in this file will be lost!
+
+from PyQt4 import QtCore, QtGui
+from PLTE import MyTextEdit,  MyHighlighter
+from buildin_diction import Diction
+from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QCompleter
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    _fromUtf8 = lambda s: s
+
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName(_fromUtf8("MainWindow"))
+        MainWindow.resize(800, 600)
+        self.centralwidget = QtGui.QWidget(MainWindow)
+        self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
+        self.NewButton = QtGui.QPushButton(self.centralwidget)
+        self.NewButton.setGeometry(QtCore.QRect(10, 10, 99, 23))
+        self.NewButton.setObjectName(_fromUtf8("NewButton"))
+        self.SaveButton = QtGui.QPushButton(self.centralwidget)
+        self.SaveButton.setGeometry(QtCore.QRect(120, 10, 99, 23))
+        self.SaveButton.setObjectName(_fromUtf8("SaveButton"))
+        self.LoadButton = QtGui.QPushButton(self.centralwidget)
+        self.LoadButton.setGeometry(QtCore.QRect(230, 10, 99, 23))
+        self.LoadButton.setObjectName(_fromUtf8("LoadButton"))
+        self.scrollArea = QtGui.QScrollArea(self.centralwidget)
+        self.scrollArea.setGeometry(QtCore.QRect(10, 40, 781, 521))
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setObjectName(_fromUtf8("scrollArea"))
+        self.scrollAreaWidgetContents = QtGui.QWidget()
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 775, 515))
+        self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
+        
+        self.words = Diction().RetDictBuild()
+        self.completer = QCompleter(self.words)
+        #self.completer.setCaseSensitivity(Qt.CaseSensitive)
+        #self.completer.setCompletionMode(QCompleter.PopupCompletion)
+        self.textEdit = MyTextEdit(self.scrollAreaWidgetContents)
+        self.textEdit.setGeometry(QtCore.QRect(0, 0, 771, 511))
+        self.textEdit.setObjectName(_fromUtf8("textEdit"))
+        self.textEdit.setTabStopWidth(20)
+        self.textEdit.setCompleter(self.completer)
+        self.textEdit.setFocus(True)
+        highlighter = MyHighlighter(self.textEdit.document())
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtGui.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 20))
+        self.menubar.setObjectName(_fromUtf8("menubar"))
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtGui.QStatusBar(MainWindow)
+        self.statusbar.setObjectName(_fromUtf8("statusbar"))
+        MainWindow.setStatusBar(self.statusbar)
+
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def retranslateUi(self, MainWindow):
+        MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
+        self.NewButton.setText(QtGui.QApplication.translate("MainWindow", "New", None, QtGui.QApplication.UnicodeUTF8))
+        self.SaveButton.setText(QtGui.QApplication.translate("MainWindow", "Save", None, QtGui.QApplication.UnicodeUTF8))
+        self.LoadButton.setText(QtGui.QApplication.translate("MainWindow", "Load", None, QtGui.QApplication.UnicodeUTF8))
+        
+'''class MyTextEdit(QtGui.QTextEdit,Ui_MainWindow):
+	def __init__(self, parent = None):
+		super(MyTextEdit,self).__init__(parent)
+		self.setMinimumWidth(400)
+
+	def setColor(self):
+		print 'colorized!'
+
+	def textUnderCursor(self):
+		txt = self.textCursor()
+		txt.select(QtGui.QTextCursor.WordUnderCursor)
+		txt = str(str(txt).join("dupa"))
+		global textEdit
+		textEdit.setHtml(txt)
+		return txt.selectedText()
+
+	def keyPressEvent(self,event):
+		if event.key()==QtCore.Qt.Key_Space:
+			currentWord = self.textUnderCursor()
+			print currentWord
+			self.setColor()
+			self.d = Diction().RetDict()
+			if currentWord in self.d:
+				print "self colorized"
+
+		isShortcut = (event.modifiers() == QtCore.Qt.ControlModifier)
+
+		if (not isShortcut):
+			QtGui.QTextEdit.keyPressEvent(self, event)
+		
+class MyHighlighter(QSyntaxHighlighter):
+	def HighLighter(txt):
+		
+
+'''
