@@ -43,6 +43,7 @@ class MyTextEdit(QtGui.QTextEdit):
         self.bracket = False
         self.brace = False
         self.completer = None
+        self.returnPressed = False
         
         #self.doc = QTextDocument(None)
 
@@ -54,19 +55,21 @@ class MyTextEdit(QtGui.QTextEdit):
 
         completer.setWidget(self)
         completer.setCompletionMode(QtGui.QCompleter.PopupCompletion)
-        completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        completer.setCaseSensitivity(QtCore.Qt.CaseSensitive)
         self.completer = completer
         self.connect(self.completer,
             QtCore.SIGNAL("activated(const QString&)"), self.insertCompletion)
 
     def insertCompletion(self, completion):
+        print("in insert method: ", self.textUnderCursor())
         tc = self.textCursor()
-        extra = (completion.length() -
-            self.completer.completionPrefix().length())
+        extra = (len(completion) -
+            len(self.completer.completionPrefix()))
         tc.movePosition(QtGui.QTextCursor.Left)
-        #tc.movePosition(QtGui.QTextCursor.EndOfWord)
-        tc.insertText(completion.right(extra-1))
+        tc.movePosition(QtGui.QTextCursor.EndOfWord)
+        tc.insertText(completion[(len(completion))-(extra):])
         self.setTextCursor(tc)
+        print("after insert: ", self.textUnderCursor())
 
     def textUnderCursor(self):
         txt = self.textCursor()
@@ -74,47 +77,13 @@ class MyTextEdit(QtGui.QTextEdit):
         selected = txt.selectedText()
         return selected
 
+    def focusInEvent(self, event):
+        if self.completer:
+            self.completer.setWidget(self)
+        QtGui.QTextEdit.focusInEvent(self, event)
+
     def keyPressEvent(self,event):
-        if self.completer and self.completer.popup().isVisible():
-            if event.key() in (
-            QtCore.Qt.Key_Enter,
-            QtCore.Qt.Key_Return,
-            QtCore.Qt.Key_Escape,
-            QtCore.Qt.Key_Tab,
-            QtCore.Qt.Key_Backtab):
-                event.ignore()
-                return
-        
-        isShortcut = (event.modifiers() == QtCore.Qt.ControlModifier)
-        hasModifier = ((event.modifiers() != QtCore.Qt.NoModifier) and
-                        not ctrlOrShift)
-        completionPrefix = self.textUnderCursor()
-        if (not self.completer or not isShortcut):
-            QtGui.QTextEdit.keyPressEvent(self, event)
-        eow = QtCore.QString("~!@#$%^&*()_+{}|:\"<>?,./;'[]\\-=") #end of word
-        ## ctrl or shift key on it's own??
-        ctrlOrShift = event.modifiers() in (QtCore.Qt.ControlModifier ,
-                QtCore.Qt.ShiftModifier)
-        if ctrlOrShift and event.text().isEmpty():
-            # ctrl or shift key on it's own
-            return
-        if (not isShortcut and (hasModifier or not event.text() or
-        len(completionPrefix) < 3 or
-        eow.contains(event.text().right(1)))):
-            self.completer.popup().hide()
-            return
-
-        if (completionPrefix != self.completer.completionPrefix()):
-            self.completer.setCompletionPrefix(completionPrefix)
-            popup = self.completer.popup()
-            popup.setCurrentIndex(
-                self.completer.completionModel().index(0,0))
-
-        cr = self.cursorRect()
-        cr.setWidth(self.completer.popup().sizeHintForColumn(0)
-            + self.completer.popup().verticalScrollBar().sizeHint().width())
-        self.completer.complete(cr) ## popup it up!
-        
+        event.accept()
         if event.key()==QtCore.Qt.Key_Return:
             print("returnPressed")
             
@@ -132,16 +101,67 @@ class MyTextEdit(QtGui.QTextEdit):
             
         elif event.key()==QtCore.Qt.Key_BraceLeft:
             self.setBrace(True)
-           
-        
 
-        if (not isShortcut):
+        if self.completer.popup().isVisible():
+            if event.key() in (
+            QtCore.Qt.Key_Enter,
+            QtCore.Qt.Key_Return,
+            QtCore.Qt.Key_Escape,
+            QtCore.Qt.Key_Tab,
+            QtCore.Qt.Key_Backtab):
+                event.ignore()
+                print("event off")
+                return
+        else:
+            event.accept()
+ 
+        isShortcut = (event.modifiers() == QtCore.Qt.ControlModifier and event.key() == Qt.Key_E)
+        
+        if not self.completer or not isShortcut:
             QtGui.QTextEdit.keyPressEvent(self, event)
-            #self.keyPredef setBracket(self, bracket = False):
-        #elf.bracket = bracket
-    
-    #def getBracket(self):
-       # return self.bracketssEvent(self, event)
+        
+        ctrlOrShift = event.modifiers() in (QtCore.Qt.ControlModifier ,
+                QtCore.Qt.ShiftModifier)
+        
+        if ctrlOrShift and event.text() == None:
+            # ctrl or shift key on it's own
+            return
+        
+        hasModifier = ((event.modifiers() != QtCore.Qt.NoModifier) and
+                        not ctrlOrShift)
+        
+        eow = "~!@#$%^&*()_+{}|:\"<>?,./;'[]\\-=" #end of word
+        ## ctrl or shift key on it's own??
+
+        len_ev = len(event.text())
+        str_ev = event.text()
+        #print(rfind(eow, str_ev[len_ev - 2][len_ev -1]))
+        
+        completionPrefix = self.textUnderCursor()
+        
+        if (not isShortcut and (hasModifier or not event.text() or
+        len(completionPrefix) < 3) or (str_ev[len_ev - 1] in eow)):
+            self.completer.popup().hide()
+            
+            return
+
+        if (completionPrefix != self.completer.completionPrefix()):
+            self.completer.setCompletionPrefix(completionPrefix)
+            popup = self.completer.popup()
+            popup.setCurrentIndex(
+                self.completer.completionModel().index(0,0))
+
+        print("just before popup")
+        print(self.textUnderCursor())
+        
+        cr = self.cursorRect()
+        cr.setWidth(self.completer.popup().sizeHintForColumn(0)
+            + self.completer.popup().verticalScrollBar().sizeHint().width())
+        self.completer.complete(cr) ## popup it up!
+        
+        print("after popup: ", self.textUnderCursor())
+        
+        
     
     #Returns true if we need indent in new line of code
     def needNextIndent(self):
