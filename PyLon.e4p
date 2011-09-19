@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Project SYSTEM "Project-5.1.dtd">
+<!-- eric5 project file for project PyLon -->
+<!-- Saved: 2011-09-19, 15:28:23 -->
+<!-- Copyright (C) 2011 Lukasz Baniecki, mlodir90@gmail.com -->
+<Project version="5.1">
+  <Language>en</Language>
+  <Hash>002a979db9b272c4c5e3f3ce0763009709104e50</Hash>
+  <ProgLanguage mixed="0">Python3</ProgLanguage>
+  <ProjectType>Qt4</ProjectType>
+  <Description>Python IDE. For now its just extended version of QTextEdit, which contains syntax highlighting, autoindenting and almost done autocompletion.
+
+If you are so desperate in searching for good python IDE, that you find out this project, try to run it by typing:
+python main.pyw
+Its important to use &lt;3 version of python</Description>
+  <Version>0.1</Version>
+  <Author>Lukasz Baniecki</Author>
+  <Email>mlodir90@gmail.com</Email>
+  <Sources>
+    <Source>src/main.pyw</Source>
+    <Source>src/PLGui.py</Source>
+    <Source>src/ui_PyLonGui.py</Source>
+    <Source>src/buildin_diction.py</Source>
+    <Source>src/build.py</Source>
+    <Source>src/mainwindow.py</Source>
+    <Source>src/PLTE.py</Source>
+    <Source>__init__.py</Source>
+  </Sources>
+  <Forms>
+    <Form>src/ui/PyLonGui.ui</Form>
+  </Forms>
+  <Translations/>
+  <Resources/>
+  <Interfaces/>
+  <Others/>
+  <MainScript>src/main.pyw</MainScript>
+  <Vcs>
+    <VcsType>None</VcsType>
+  </Vcs>
+  <FiletypeAssociations>
+    <FiletypeAssociation pattern="*.pyw3" type="SOURCES"/>
+    <FiletypeAssociation pattern="*.ui" type="FORMS"/>
+    <FiletypeAssociation pattern="*.idl" type="INTERFACES"/>
+    <FiletypeAssociation pattern="*.qm" type="TRANSLATIONS"/>
+    <FiletypeAssociation pattern="*.py3" type="SOURCES"/>
+    <FiletypeAssociation pattern="*.qrc" type="RESOURCES"/>
+    <FiletypeAssociation pattern="*.pyw" type="SOURCES"/>
+    <FiletypeAssociation pattern="*.ui.h" type="FORMS"/>
+    <FiletypeAssociation pattern="*.ts" type="TRANSLATIONS"/>
+    <FiletypeAssociation pattern="*.py" type="SOURCES"/>
+  </FiletypeAssociations>
+</Project>
