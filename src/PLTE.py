@@ -138,6 +138,11 @@ class MyTextEdit(QtGui.QTextEdit):
         #print(rfind(eow, str_ev[len_ev - 2][len_ev -1]))
         
         completionPrefix = self.textUnderCursor()
+        completionPrefix = completionPrefix.split("\t", self.currentIndent)
+        completionPrefix = "".join(["%s" % el for el in completionPrefix])
+
+        print("after split: ", completionPrefix)
+        
         
         if (not isShortcut and (hasModifier or not event.text() or
         len(completionPrefix) < 3) or (str_ev[len_ev - 1] in eow)):
