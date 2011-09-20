@@ -15,6 +15,7 @@ class PyLonGui(QMainWindow, Ui_MainWindow):
             self.indent = "\t"
             self.autoSelf = False
             self.indentSelf = 0
+            self.quoteS = False
     
             self.connect(self.SaveButton, SIGNAL("clicked()"),self.saveAction)
             self.connect(self.textEdit, SIGNAL("cursorPositionChanged()"), self.getInfo)
@@ -39,13 +40,19 @@ class PyLonGui(QMainWindow, Ui_MainWindow):
     def idt(self):
         textEdit.indent()
     
+    def disconnectCursor(self):
+        self.disconnect(self.textEdit, SIGNAL("cursorPositionChanged()"), self.getInfo)
+    
+    def connectCursor(self):
+        self.connect(self.textEdit, SIGNAL("cursorPositionChanged()"), self.getInfo)
+    
     def getInfo(self):
         if(not self.textEdit.getIndentNow()):
             self.textEdit.needNextIndent()
             self.textEdit.setCurrentIndent(self.currentIndent())
             
         if self.textEdit.getIndentNow():
-            self.disconnect(self.textEdit, SIGNAL("cursorPositionChanged()"), self.getInfo)
+            self.disconnectCursor()
             print("indenting in progress")
             curin = self.textEdit.getCurrentIndent()
             print("curindlvl = "+str(curin))
@@ -57,22 +64,27 @@ class PyLonGui(QMainWindow, Ui_MainWindow):
                 self.textEdit.insertPlainText("\t")
             print("indentNow False")
             self.textEdit.setIndentNow(False)
-            self.connect(self.textEdit, SIGNAL("cursorPositionChanged()"), self.getInfo)
+            self.connectCursor()
             
         if self.textEdit.getParenthesis():
-            self.disconnect(self.textEdit, SIGNAL("cursorPositionChanged()"), self.getInfo)
+            self.disconnectCursor()
             self.autoParenthesis()
-            self.connect(self.textEdit, SIGNAL("cursorPositionChanged()"), self.getInfo)
+            self.connectCursor()
         
         if self.textEdit.getQuote():
-            self.disconnect(self.textEdit, SIGNAL("cursorPositionChanged()"), self.getInfo)
+            self.disconnectCursor()
             self.autoQuote()
-            self.connect(self.textEdit, SIGNAL("cursorPositionChanged()"), self.getInfo)
+            self.connectCursor()
+        
+        if self.textEdit.getQuoteS():
+            self.disconnectCursor()
+            self.autoQuoteS()
+            self.connectCursor()
             
         if self.textEdit.getBracket():
-            self.disconnect(self.textEdit, SIGNAL("cursorPositionChanged()"), self.getInfo)
+            self.disconnectCursor()
             self.autoBracket()
-            self.connect(self.textEdit, SIGNAL("cursorPositionChanged()"), self.getInfo)
+            self.connectCursor()
             
         if self.textEdit.getBrace():
             self.disconnect(self.textEdit, SIGNAL("cursorPositionChanged()"), self.getInfo)
@@ -126,6 +138,11 @@ class PyLonGui(QMainWindow, Ui_MainWindow):
         self.textEdit.insertPlainText("\"")
         self.textEdit.moveCursor(QTextCursor.Left, QTextCursor.MoveAnchor)
         self.textEdit.setQuote()
+    
+    def autoQuoteS(self):
+        self.textEdit.insertPlainText("\'")
+        self.textEdit.moveCursor(QTextCursor.Left, QTextCursor.MoveAnchor)
+        self.textEdit.setQuoteS()
 
     def autoBracket(self):
         self.textEdit.insertPlainText("]")

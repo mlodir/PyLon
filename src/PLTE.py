@@ -28,7 +28,8 @@ STYLES = {
         'dcname': setStyle('darkBlue', 'bold'), 
         'numbers': setStyle('cyan'), 
         'math': setStyle('green', 'bold'), 
-        'braces': setStyle('black', 'bold')
+        'braces': setStyle('black', 'bold'), 
+        'comments': setStyle('red')
         }
 
 class MyTextEdit(QtGui.QTextEdit):
@@ -45,6 +46,7 @@ class MyTextEdit(QtGui.QTextEdit):
         self.completer = None
         self.returnPressed = False
         self.comma = False
+        self.quoteS = False
         
         #self.doc = QTextDocument(None)
 
@@ -96,6 +98,9 @@ class MyTextEdit(QtGui.QTextEdit):
             
         elif event.key()==QtCore.Qt.Key_QuoteDbl:
             self.setQuote(True)
+        
+        elif event.key()==QtCore.Qt.Key_Apostrophe:
+            self.setQuoteS(True)
             
         elif event.key()==QtCore.Qt.Key_BracketLeft:
             self.setBracket(True)
@@ -230,6 +235,12 @@ class MyTextEdit(QtGui.QTextEdit):
     def getQuote(self):
         return self.quote
     
+    def setQuoteS(self, quoteS = False):
+        self.quoteS = quoteS
+    
+    def getQuoteS(self):
+        return self.quoteS
+    
     def setComma(self,  comma = False):
         self.comma = comma
     
@@ -240,7 +251,7 @@ class MyHighlighter(QSyntaxHighlighter):
     def __init__(self, parent=None):
         super(MyHighlighter, self).__init__(parent)
         rules = []
-
+        
         dictb = Diction().RetDictBuild()
 
         rules += [(r'%s' % w, 0, STYLES['buildin'])
@@ -268,6 +279,10 @@ class MyHighlighter(QSyntaxHighlighter):
         rules +=[(r'%s' %w, 0, STYLES['braces'])
         for w in dictbr]
         
+        rules +=[(r'"[^"\\]*(\\.[^"\\]*)*"', 0, STYLES['comments'])]
+        rules +=[(r"'[^'\\]*(\\.[^'\\]*)*'", 0, STYLES['comments'])]
+        rules +=[(r'#[^\n]*', 0, STYLES['comments'])]
+        
         self.rules = [(QRegExp(pat), index, fmt)
             for (pat, index, fmt) in rules]
             
@@ -282,4 +297,5 @@ class MyHighlighter(QSyntaxHighlighter):
                 self.setFormat(index, length, format)
                 index = expression.indexIn(text, index + length)
         self.setCurrentBlockState( 0 )
-
+        
+     
