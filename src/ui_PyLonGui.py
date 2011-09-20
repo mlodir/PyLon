@@ -42,6 +42,7 @@ class Ui_MainWindow(object):
         self.scrollAreaWidgetContents.setObjectName(_fromUtf8("scrollAreaWidgetContents"))
         
         self.words = Diction().RetDictBuild()
+        self.words = self.words + Diction().RetDictDefClass()
         self.completer = QCompleter(self.words)
         #self.completer.setCaseSensitivity(Qt.CaseSensitive)
         #self.completer.setCompletionMode(QCompleter.PopupCompletion)

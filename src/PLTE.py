@@ -44,6 +44,7 @@ class MyTextEdit(QtGui.QTextEdit):
         self.brace = False
         self.completer = None
         self.returnPressed = False
+        self.comma = False
         
         #self.doc = QTextDocument(None)
 
@@ -101,6 +102,9 @@ class MyTextEdit(QtGui.QTextEdit):
             
         elif event.key()==QtCore.Qt.Key_BraceLeft:
             self.setBrace(True)
+        
+        elif event.key()==QtCore.Qt.Key_Comma:
+            self.setComma(True)
 
         if self.completer.popup().isVisible():
             if event.key() in (
@@ -225,6 +229,12 @@ class MyTextEdit(QtGui.QTextEdit):
     
     def getQuote(self):
         return self.quote
+    
+    def setComma(self,  comma = False):
+        self.comma = comma
+    
+    def getComma(self):
+        return self.comma
 
 class MyHighlighter(QSyntaxHighlighter):
     def __init__(self, parent=None):

@@ -13,6 +13,8 @@ class PyLonGui(QMainWindow, Ui_MainWindow):
             self.cursor = QCursor()
             self.indentLevel = 0
             self.indent = "\t"
+            self.autoSelf = False
+            self.indentSelf = 0
     
             self.connect(self.SaveButton, SIGNAL("clicked()"),self.saveAction)
             self.connect(self.textEdit, SIGNAL("cursorPositionChanged()"), self.getInfo)
@@ -76,6 +78,11 @@ class PyLonGui(QMainWindow, Ui_MainWindow):
             self.disconnect(self.textEdit, SIGNAL("cursorPositionChanged()"), self.getInfo)
             self.autoBrace()
             self.connect(self.textEdit, SIGNAL("cursorPositionChanged()"), self.getInfo)
+        
+        if self.textEdit.getComma():
+            self.disconnect(self.textEdit,  SIGNAL("cursorPositionChanged()"), self.getInfo)
+            self.autoComma()
+            self.connect(self.textEdit,  SIGNAL("cursorPositionChanged()"), self.getInfo)
 
    #Returns indent level of line under cursor
     def currentIndent(self):
@@ -94,8 +101,17 @@ class PyLonGui(QMainWindow, Ui_MainWindow):
         cur = self.textEdit.textCursor()
         cur.select(QTextCursor.LineUnderCursor)
         selected = cur.selectedText()
-        if (re.search("class", selected)) or (re.search("def", selected)):
+        if (re.search("class", selected)):
             self.textEdit.insertPlainText("):")
+            indent = self.currentIndent()
+            self.setAutoSelf(True, indent+1)
+            move = 2
+        elif (re.search("def", selected)):
+            idt = self.currentIndent()
+            if self.getAutoSelf(idt):
+                self.textEdit.insertPlainText("self):")
+            else:
+                self.textEdit.insertPlainText("):")
             move = 2
         else:
             self.textEdit.insertPlainText(")")
@@ -121,4 +137,20 @@ class PyLonGui(QMainWindow, Ui_MainWindow):
         self.textEdit.moveCursor(QTextCursor.Left, QTextCursor.MoveAnchor)
         self.textEdit.setBrace() 
     #def nextIndent(self, current_indent):
+    
+    def autoComma(self):
+        self.textEdit.insertPlainText(" ")
+        self.textEdit.setComma()
 
+    def setAutoSelf(self, indent, autoSelf = False):
+        self.autoSelf = autoSelf
+        self.indentSelf = indent
+    
+    def getAutoSelf(self, indent):
+        if (self.indentSelf == indent):
+            return self.autoSelf
+        else:
+            return False
+    
+    def getIndentSelf(self):
+        return self.indentSelf
