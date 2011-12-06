@@ -16,27 +16,57 @@ class PyLonGui(QMainWindow, Ui_MainWindow):
             self.autoSelf = False
             self.indentSelf = 0
             self.quoteS = False
+            self.currentFile = False
+            self.currentFileName = ""
     
-            self.connect(self.SaveButton, SIGNAL("clicked()"),self.saveAction)
+            self.connect(self.SaveAsButton, SIGNAL("clicked()"),self.saveAsAction)
             self.connect(self.textEdit, SIGNAL("cursorPositionChanged()"), self.getInfo)
+            self.connect(self.SaveButton, SIGNAL("clicked()"), self.saveAction)
+            self.connect(self.LoadButton, SIGNAL("clicked()"), self.loadAction)
+
+    def saveAsAction(self):
+        print("CLICKED")
+        fileName = QFileDialog.getSaveFileName(self,self.tr("Save"),"~",self.tr("Python sources (*.py)"))
+        if (fileName != ""):
+            print(fileName)
+            text = self.getSourceCode()
+            self.saveAs(text,fileName)
+            self.currentFile = True
+            self.currentFileName = fileName
+        else:
+            return
 
     def saveAction(self):
-        print("CLICKED")
-        fileName = QFileDialog.getSaveFileName(self,self.tr("Save"),"/home/towdy",self.tr("Python sources (*.py)"))
-        print(fileName)
-        text = self.getSourceCode()
-        self.saveAs(text,fileName)
-
+        if (not self.currentFile):
+            self.saveAsAction()
+        else:
+            text = self.getSourceCode()
+            fileName = self.currentFileName
+            self.saveAs(text, fileName)
+    
+    def loadAction(self):
+        fileName = QFileDialog.getOpenFileName(self, self.tr("Open"), "", self.tr("Python sources (*.py)"))
+        if (fileName != ""):
+            open_code = open(fileName, "r")
+            for line in open_code:
+                self.textEdit.insertPlainText(line)
+        else:
+            return
 
     def getSourceCode(self):
         
         return self.textEdit.toPlainText()
 
     def saveAs(self, text, fileName):
-        save_code = open(fileName,"a")
+        save_code = open(fileName,"w")
         save_code.write(text)
         save_code.close()
 
+    def save(self, text, fileName):
+        save_code = open(fileName, "a")
+        save_code = write(text)
+        save_code.close()
+    
     def idt(self):
         textEdit.indent()
     
